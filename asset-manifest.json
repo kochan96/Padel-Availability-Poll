@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/padel-availability-poll/static/css/main.e6c13ad2.css",
-    "main.js": "/padel-availability-poll/static/js/main.f291dbfc.js",
+    "main.js": "/padel-availability-poll/static/js/main.ee10bc72.js",
     "index.html": "/padel-availability-poll/index.html",
     "main.e6c13ad2.css.map": "/padel-availability-poll/static/css/main.e6c13ad2.css.map",
-    "main.f291dbfc.js.map": "/padel-availability-poll/static/js/main.f291dbfc.js.map"
+    "main.ee10bc72.js.map": "/padel-availability-poll/static/js/main.ee10bc72.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.f291dbfc.js"
+    "static/js/main.ee10bc72.js"
   ]
 }
