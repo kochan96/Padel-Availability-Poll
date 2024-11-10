@@ -30,7 +30,7 @@ type TenantsResponse = {
   readonly resources: CourtResources[];
 };
 
-const playtomicHost = "https://playtomic.io/api/v1";
+const playtomicHost = "https://corsproxy.io/?https://playtomic.io/api/v1";
 const userId = "me";
 const tenant_id = "057c5f40-f54b-4e4d-977c-1f9547a25076";
 
