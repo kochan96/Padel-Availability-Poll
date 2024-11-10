@@ -1,6 +1,5 @@
 import styled, { createGlobalStyle } from "styled-components";
 import { useEffect, useState } from "react";
-import { Tabs, Tab } from "./components/Tabs";
 import {
   fetchTenantsInfo,
   fetchAvailability,
@@ -54,13 +53,13 @@ const App = () => {
       setPlaceInfo(response);
     };
     getPlaceInfo();
-  }, []);
+  }, [startDate]);
 
   useEffect(() => {
     const getCourtInfo = async () => {
       const promises: Promise<CourtAvailabilityResponse[]>[] = [];
       for (let counter = 0; counter < 7; counter += 1) {
-        const currentDate = addDays(new Date(), counter);
+        const currentDate = addDays(startDate, counter);
 
         promises.push(
           fetchAvailability(
@@ -71,7 +70,7 @@ const App = () => {
         );
       }
       const result = await Promise.all(promises);
-      setCourtInfo((prev) => result.flat(1));
+      setCourtInfo(result.flat(1));
       setLastUpdated(new Date());
     };
 
@@ -81,29 +80,24 @@ const App = () => {
     return () => {
       clearInterval(myInterval);
     };
-  }, []);
+  }, [startDate]);
 
   return (
     <MainDiv>
       <GlobalStyle />
-      <div>
+      <div style={{ padding: "20px" }}>
         <a href="https://playtomic.io/interpadel-warszawa/057c5f40-f54b-4e4d-977c-1f9547a25076?q=PADEL">
-          Playtomic
+          Go to offical playtomic page
         </a>
       </div>
       <ScheduleSelectorCard>
-        <Tabs>
-          <Tab title="Dostępność kortów">
-            <CourtAvailabilityMatrix
-              placeInfo={placeInfo}
-              courtInfo={courtInfo}
-              lastUpdated={lasUpdatedInfo}
-              startDate={startDate}
-              setStartDate={setStartDate}
-            />
-          </Tab>
-          <Tab title="Dostępność ludzi"></Tab>
-        </Tabs>
+        <CourtAvailabilityMatrix
+          placeInfo={placeInfo}
+          courtInfo={courtInfo}
+          lastUpdated={lasUpdatedInfo}
+          startDate={startDate}
+          setStartDate={setStartDate}
+        />
       </ScheduleSelectorCard>
     </MainDiv>
   );

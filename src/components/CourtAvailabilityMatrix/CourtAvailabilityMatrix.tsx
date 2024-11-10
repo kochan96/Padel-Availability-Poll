@@ -11,6 +11,7 @@ import {
   addMinutes,
   startOfDay,
   formatDate,
+  isSameDay,
 } from "date-fns";
 
 import { pl } from "date-fns/locale";
@@ -60,13 +61,21 @@ export const Subtitle = styled.h2`
 
 const DateLabel = styled(Subtitle)`
   @media (max-width: 699px) {
-    font-size: 12px;
+    font-size: 10px;
   }
   margin: 0;
   margin-bottom: 4px;
 `;
 
 export const Text = styled.p`
+  font-size: 14px;
+  font-weight: 300;
+  line-height: ${14 * 1.37}px;
+  color: rgba(79, 79, 79, 0.87);
+  margin: 5px 0;
+`;
+
+export const Label = styled.label`
   font-size: 14px;
   font-weight: 300;
   line-height: ${14 * 1.37}px;
@@ -94,17 +103,48 @@ const DateCell = styled.div<{
 
   &:hover {
     background-color: ${(props) =>
-      props.$available ? "rgba(162, 198, 248, 1)" : "rgba(79, 79, 79, 0.87)"};
+    props.$available ? "rgba(162, 198, 248, 1)" : "rgba(79, 79, 79, 0.87)"};
+  }
+`;
+
+const NavigationButton = styled.button`
+  background: none;
+  border: none;
+  color: ${props => (props.disabled ? '#A9A9A9' : '#007bff')}; 
+  cursor: ${props => (props.disabled ? 'default' : 'pointer')}; 
+  padding: 0;
+  font-size: 20px;
+  font-weight: 400;
+  text-align: center;
+
+  @media (max-width: 700px) {
+    font-size: 18px;
+  }
+
+  @media (max-width: 699px) {
+    font-size: 12px;
+  }
+  
+  &:hover {
+    text-decoration: ${props => (props.disabled ? 'none' : 'underline')}; 
+  }
+
+  &:focus {
+    outline: none;
   }
 `;
 
 const CourtAvailabilityMatrix: React.FC<CourtAvailabilityMatrixProps> = (
   props
 ) => {
-  //if null then loading
+
+  const [isDoubles, setIsDoubles] = useState(true);
+  const [duration, setDuration] = useState(90)
+
   if (!props.placeInfo || !props.courtInfo) {
     return <p>Loading</p>;
   }
+
 
   const days = 7;
   const min_time = 12;
@@ -131,10 +171,11 @@ const CourtAvailabilityMatrix: React.FC<CourtAvailabilityMatrixProps> = (
   const numDays = dates.length;
   const numTimes = dates[0].length;
 
-  const slot_duration = 90;
+  const slot_duration = duration;
+  const filter = isDoubles ? "double" : "single";
   const doubleCourts = new Set(
     props.placeInfo.resources
-      .filter((x) => x.properties.resource_size === "single")
+      .filter((x) => x.properties.resource_size === filter)
       .map((x) => x.resource_id)
   );
 
@@ -185,15 +226,46 @@ const CourtAvailabilityMatrix: React.FC<CourtAvailabilityMatrixProps> = (
 
   return (
     <>
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        paddingBottom: "20px"
+      }}>
+        <Text>Court Type: </Text>
+        <Label style={{ paddingRight: "20px", paddingLeft: "20px" }}>
+          <input type="radio" checked={!isDoubles} onClick={e => setIsDoubles(false)} />
+          Singles Court
+        </Label>
+        <Label>
+          <input type="radio" checked={isDoubles} onClick={e => setIsDoubles(true)} />
+          Doubles Court
+        </Label>
+      </div >
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        paddingBottom: "20px"
+      }}>
+        <Text>Duration: </Text>
+        <Label style={{ paddingRight: "20px", paddingLeft: "20px" }}>
+          <input type="radio" checked={duration === 60} onClick={e => setDuration(60)} />
+          60 minutes
+        </Label>
+        <Label style={{ paddingRight: "20px" }}>
+          <input type="radio" checked={duration === 90} onClick={e => setDuration(90)} />
+          90 minutes
+        </Label >
+        <Label>
+          <input type="radio" checked={duration === 120} onClick={e => setDuration(120)} />
+          120 minutes
+        </Label>
+      </div >
       <Wrapper>
         <Grid $columns={numDays + 1} $rows={numTimes + 1}>
-          <div></div>
-          {/* <button
+          <NavigationButton
             disabled={isSameDay(props.startDate, new Date())}
             onClick={() => props.setStartDate((prev) => addDays(prev, -days))}
-          >
-            Previous
-          </button> */}
+          >{"<"} Back</NavigationButton>
           {dates.map((x) => (
             <GridCell key={x[0].toISOString()}>
               <DateLabel>
@@ -201,13 +273,10 @@ const CourtAvailabilityMatrix: React.FC<CourtAvailabilityMatrixProps> = (
               </DateLabel>
             </GridCell>
           ))}
-          <div></div>
-          {/* <button
+          <NavigationButton
             disabled={isSameDay(props.startDate, addDays(new Date(), 7))}
             onClick={() => props.setStartDate((prev) => addDays(prev, days))}
-          >
-            Next
-          </button> */}
+          >Next {">"}</NavigationButton>
           {gridElements}
         </Grid>
       </Wrapper>
