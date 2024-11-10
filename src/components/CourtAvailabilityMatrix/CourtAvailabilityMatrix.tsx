@@ -45,7 +45,6 @@ const Grid = styled.div<{
 
 export const GridCell = styled.div`
   place-self: stretch;
-  touch-action: none;
 `;
 
 export const Subtitle = styled.h2`
